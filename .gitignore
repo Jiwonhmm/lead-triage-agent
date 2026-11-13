@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets (never commit real keys)
+.env
+.env.*
+!.env.example
+
+# Node (not used in this project)
+node_modules/

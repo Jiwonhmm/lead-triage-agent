@@ -1,0 +1,72 @@
+{
+  "name": "Brightwave Web Studio",
+  "note": "Fictional company. All data in this repo is synthetic.",
+  "location": "Toronto, ON, Canada",
+  "currency": "CAD",
+  "website": "https://brightwave.example.com",
+  "contact_email": "hello@brightwave.example.com",
+  "reply_signature": "Best,\nThe Brightwave Team",
+  "business_hours": "Mon-Fri, 9:00-17:00 ET",
+  "typical_response_time": "within 1 business day",
+  "services": [
+    {
+      "id": "website_design",
+      "name": "Website Design & Build",
+      "description": "Custom 5-10 page marketing website for small businesses, mobile-friendly, with a simple CMS.",
+      "price_range": "CAD 3,000-12,000",
+      "min_budget": 3000,
+      "typical_timeline": "4-8 weeks"
+    },
+    {
+      "id": "ecommerce",
+      "name": "Online Store (E-commerce)",
+      "description": "Shopify or WooCommerce store setup with payments, shipping rules and product import.",
+      "price_range": "CAD 5,000-15,000",
+      "min_budget": 5000,
+      "typical_timeline": "6-10 weeks"
+    },
+    {
+      "id": "booking_system",
+      "name": "Booking & Scheduling Integration",
+      "description": "Online appointment booking with calendar sync, reminders and payment deposits.",
+      "price_range": "CAD 1,500-4,000",
+      "min_budget": 1500,
+      "typical_timeline": "2-4 weeks"
+    },
+    {
+      "id": "brand_identity",
+      "name": "Brand Identity",
+      "description": "Logo, color palette, typography and a short brand guide.",
+      "price_range": "CAD 1,500-5,000",
+      "min_budget": 1500,
+      "typical_timeline": "3-5 weeks"
+    },
+    {
+      "id": "seo_maintenance",
+      "name": "SEO & Website Maintenance Retainer",
+      "description": "Monthly updates, backups, security patches, basic SEO reporting.",
+      "price_range": "CAD 400-900 per month",
+      "min_budget": 400,
+      "typical_timeline": "ongoing, 3-month minimum"
+    }
+  ],
+  "out_of_scope": [
+    "Native mobile app development",
+    "Custom enterprise software",
+    "Paid advertising management",
+    "Video production",
+    "Hosting-only services"
+  ],
+  "lead_grading_criteria": {
+    "hot": "Asks for an in-scope service, budget meets or exceeds the service minimum (or is not stated but the scope is clearly sized for the price range), wants to start within about 60 days, and gives a way to reply.",
+    "warm": "In-scope service but missing a key signal: budget unclear or a bit below range, timeline vague or 3+ months away, or still comparing options.",
+    "cold": "Out of scope, spam or sales pitch, job seeker, budget far below minimum, no real project, or no way to reply."
+  },
+  "reply_guidelines": [
+    "Reply in the same language the customer used.",
+    "Keep it under 150 words, friendly and professional.",
+    "Mention one relevant service and its typical price range and timeline.",
+    "Propose a 20-minute intro call; never promise a fixed price or exact date.",
+    "Never invent services, discounts or past clients."
+  ]
+}

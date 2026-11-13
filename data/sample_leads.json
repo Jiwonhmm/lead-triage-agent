@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lead-001",
+    "channel": "web_form",
+    "received_at": "2026-11-02T09:14:00-05:00",
+    "raw_text": "Hi, I'm Sarah Mitchell, owner of Mitchell Dental in Mississauga. Our website is 10 years old and not mobile friendly. We'd like a full redesign (about 8 pages) with online appointment booking. Budget is around $9,000 and we'd like to launch before the end of January. You can reach me at sarah@mitchelldental.example or 905-555-0142."
+  },
+  {
+    "id": "lead-002",
+    "channel": "email",
+    "received_at": "2026-11-03T14:40:00-05:00",
+    "raw_text": "Subject: Online store for handmade candles\n\nHello! My name is Daniel Okafor. I make soy candles and want to move from Instagram sales to a real online store. About 40 products, need Stripe payments and shipping to Canada and the US. I have $7,500 set aside and want to be live by mid-December for holiday sales. Email: daniel@emberandoak.example"
+  },
+  {
+    "id": "lead-003",
+    "channel": "web_form",
+    "received_at": "2026-11-04T11:02:00-05:00",
+    "raw_text": "We are a 3-person law office (Rivera & Chen LLP) and need a new website plus a monthly maintenance plan. Budget: up to $10k for the build, then ~$600/month. Hoping to start next week. Contact Priya at priya@riverachen.example, 416-555-0188."
+  },
+  {
+    "id": "lead-004",
+    "channel": "email",
+    "received_at": "2026-11-06T08:21:00-05:00",
+    "raw_text": "Subject: Rebrand + website\n\nHi Brightwave team, I run a yoga studio (Lotus Loop) in Hamilton. We're rebranding in the new year and need a new logo and brand guide first, then a new site. Budget for both is $8,000. Ideally kick off the first week of December. Mina Park, mina@lotusloop.example"
+  },
+  {
+    "id": "lead-005",
+    "channel": "web_form",
+    "received_at": "2026-11-09T16:55:00-05:00",
+    "raw_text": "Need a booking system added to our existing WordPress site for our dog grooming salon. Customers should pick a time, pay a deposit, and get SMS reminders. Budget is $2,500, want it running within 3 weeks. Call or text Tom at 647-555-0110."
+  },
+  {
+    "id": "lead-006",
+    "channel": "email",
+    "received_at": "2026-11-10T10:05:00-05:00",
+    "raw_text": "Subject: Urgent - site redesign\n\nHi, I'm Laura Bennett from Bennett Roofing. A competitor is eating our leads and our site is slow. We'd like to hire you to redo it ASAP, budget $6,000, start this month. laura@bennettroofing.example"
+  },
+  {
+    "id": "lead-007",
+    "channel": "web_form",
+    "received_at": "2026-11-02T13:30:00-05:00",
+    "raw_text": "Hello, I'm thinking about getting a website for my photography business. Not sure what it costs yet, just exploring. Maybe sometime next year? - Alex, alex.photo@example.com"
+  },
+  {
+    "id": "lead-008",
+    "channel": "email",
+    "received_at": "2026-11-05T09:48:00-05:00",
+    "raw_text": "Subject: Quote request\n\nHi, we're a small accounting firm and need a basic 5-page website. We're also getting quotes from two other agencies. Budget is probably around $2,000 but we're flexible. Timeline is spring. Contact: Jordan Lee, jordan@leeaccounting.example"
+  },
+  {
+    "id": "lead-009",
+    "channel": "web_form",
+    "received_at": "2026-11-06T17:12:00-05:00",
+    "raw_text": "I run a bakery and want to sell cakes online. I don't have a budget in mind, can you tell me what it would cost? I'd like to start in about 3 months. bakery.sweetrise@example.com"
+  },
+  {
+    "id": "lead-010",
+    "channel": "email",
+    "received_at": "2026-11-07T12:00:00-05:00",
+    "raw_text": "Subject: SEO help\n\nOur site gets very little traffic. We're a landscaping company in Oakville and want help with SEO and keeping the site updated. We were quoted $300 a month by someone else, does that sound right for you? Call me at 289-555-0166, Marcus."
+  },
+  {
+    "id": "lead-011",
+    "channel": "web_form",
+    "received_at": "2026-11-08T20:33:00-05:00",
+    "raw_text": "안녕하세요, 서울에서 토론토로 이민 와서 작은 네일샵을 열 예정이에요. 예약 기능이 있는 웹사이트가 필요한데 예산은 아직 정하지 못했어요. 내년 봄 오픈 목표예요. 연락처: nail.hana@example.com (하나)"
+  },
+  {
+    "id": "lead-012",
+    "channel": "email",
+    "received_at": "2026-11-11T07:45:00-05:00",
+    "raw_text": "Subject: Logo\n\nHi, I need a logo for my new consulting business. Budget around $800. No rush, whenever you have availability. - Chris Dubois, chris@dubois-consulting.example"
+  },
+  {
+    "id": "lead-013",
+    "channel": "web_form",
+    "received_at": "2026-11-12T15:20:00-05:00",
+    "raw_text": "We're a nonprofit (Greenway Youth Collective) looking to refresh our donation website. Our board must approve funds first, probably in February. Could you send a rough estimate? Contact Amara Singh, amara@greenway.example"
+  },
+  {
+    "id": "lead-014",
+    "channel": "web_form",
+    "received_at": "2026-11-01T03:12:00-05:00",
+    "raw_text": "BOOST YOUR RANKING NOW!!! We guarantee #1 on Google in 7 days. Click here: http://seo-miracle.example/offer Limited time 90% discount!!!"
+  },
+  {
+    "id": "lead-015",
+    "channel": "email",
+    "received_at": "2026-11-03T10:30:00-05:00",
+    "raw_text": "Subject: Mobile app\n\nHi, we want to build an iOS and Android app for food delivery, like Uber Eats. Budget $4,000. Need it in 2 months. Thanks, Kevin, kevin@quickbitesapp.example"
+  },
+  {
+    "id": "lead-016",
+    "channel": "email",
+    "received_at": "2026-11-04T08:00:00-05:00",
+    "raw_text": "Subject: Front-end developer application\n\nHello, I'm a recent graduate looking for a junior developer position at your studio. I've attached my resume and portfolio. Best, Nina Rossi"
+  },
+  {
+    "id": "lead-017",
+    "channel": "web_form",
+    "received_at": "2026-11-05T22:47:00-05:00",
+    "raw_text": "hi i need website. cheap. like $100. my cousin said you can do it fast"
+  },
+  {
+    "id": "lead-018",
+    "channel": "email",
+    "received_at": "2026-11-08T11:11:00-05:00",
+    "raw_text": "Subject: Partnership opportunity\n\nDear Sir/Madam, we are an offshore web hosting provider offering 50% commission for referrals. Please reply to discuss. Regards, Michael, CloudNest Hosting"
+  },
+  {
+    "id": "lead-019",
+    "channel": "web_form",
+    "received_at": "2026-11-10T14:05:00-05:00",
+    "raw_text": "Can you manage our Facebook and Google ads? We spend about $5,000 a month and want someone to run them. Budget for your fee is $1,000/month. Contact: ads@northfieldmotors.example"
+  },
+  {
+    "id": "lead-020",
+    "channel": "web_form",
+    "received_at": "2026-11-12T09:59:00-05:00",
+    "raw_text": "Hello?? Is anyone there? I submitted a request last week and nobody answered."
+  }
+]
