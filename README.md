@@ -118,6 +118,7 @@ python evals/run_evals.py   # runs the labeled eval set against the real model
 ## Design decisions
 
 - **Human in the loop by default.** An AI should not send a customer-facing message on its own. The graph pauses at `human_approval` and only resumes after a person reviews the draft.
+  - In testing, the same inquiry run four times at `temperature=0` produced four different drafts. All followed the reply guidelines, but only two of the four mentioned the booking integration the customer asked for. Wording and coverage vary from run to run, so a person checks each draft before it goes out.
 - **Validate before trusting.** Extracted data is checked against a Pydantic schema. Failed extractions are retried once, then routed to human review instead of guessing.
 - **Mock for tests, measure with evals.** Unit tests stay fast and deterministic by mocking the model. Model quality is measured separately with a labeled eval set.
 
@@ -153,7 +154,7 @@ lead-triage-agent/
 
 ## Roadmap
 
-- [ ] LangGraph agent with extract, classify, route, and draft nodes
+- [x] LangGraph agent with extract, classify, route, and draft nodes
 - [ ] Human approval with `interrupt` and checkpoints
 - [ ] Async FastAPI endpoints
 - [ ] pytest unit and integration tests
