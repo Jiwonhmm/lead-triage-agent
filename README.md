@@ -124,6 +124,26 @@ python evals/run_evals.py   # runs the labeled eval set against the real model
 
 ---
 
+## How I built this with Claude Code
+
+I used AI as a pair programmer and reviewer, not as an autopilot. I wrote or read every line myself so I can explain it, and I checked each step by running it before moving on.
+
+**Breaking the work into steps.** I followed a fixed order, one piece at a time: State and schemas → `extract` → `classify` → conditional routing → `draft_reply` → `human_approval` → API → tests and evals. Each step was small enough to run and check on its own before connecting it to the graph.
+
+**Definition of done for each step.** A step was done when it ran from the terminal on four sample leads covering each case (hot, warm, cold spam, empty message) and gave the expected result. For example, routing was done only when each lead reached the right node.
+
+**How I reviewed the output.**
+- Every wrong or unstable model output went into [`evals/prompt_log.md`](evals/prompt_log.md) with its cause, instead of being patched right away. Prompts change only after the current version has an eval score, so the before/after comparison is real.
+- Unit tests mock the LLM. Model quality is measured separately with the labeled eval set.
+
+**Claude Code setup in this repo.**
+- [`CLAUDE.md`](CLAUDE.md): project structure, commands, code rules, and what not to do (for example, never read or commit `.env`, never run paid API calls unless asked, never put side effects before `interrupt()`). Several rules come from real mistakes made while building this.
+- [`.claude/commands/test-summary.md`](.claude/commands/test-summary.md): `/test-summary` runs ruff and pytest and summarizes each failure with its likely cause.
+- [`.claude/commands/log-prompt-change.md`](.claude/commands/log-prompt-change.md): `/log-prompt-change` records a prompt change in the prompt log in a consistent format.
+- [`.claude/settings.json`](.claude/settings.json): a `PostToolUse` hook that runs `ruff format` and `ruff check` after every file edit, so formatting and indentation errors are caught immediately instead of at runtime.
+
+---
+
 ## Project structure
 
 ```
@@ -143,10 +163,14 @@ lead-triage-agent/
 ├── tests/
 │   ├── test_routing.py
 │   └── test_api.py
+├── .claude/
+│   ├── commands/       # custom slash commands
+│   └── settings.json   # hooks
 ├── .github/workflows/ci.yml
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example
+├── CLAUDE.md
 └── README.md
 ```
 

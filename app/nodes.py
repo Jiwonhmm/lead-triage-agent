@@ -4,6 +4,8 @@ from langchain_openai import ChatOpenAI
 from app.schemas import ExtractedLead, Classification
 from app.state import AgentState
 from app.prompts import EXTRACT_SYSTEM_PROMPT, CLASSIFY_SYSTEM_PROMPT, DRAFT_REPLY_SYSTEM_PROMPT
+from langgraph.types import interrupt 
+
 
 load_dotenv()
 
@@ -90,3 +92,13 @@ def route_by_grade(state : AgentState) -> str:
         return "log_only"
     else:
         raise ValueError(f"Unknown grade: {grade}")
+
+
+# HITL
+def human_appoval(state: AgentState) -> dict:
+    """
+    Human-in-the-loop approval for the lead classification.
+    """
+    decision = interrupt({"reply_draft": state["reply_draft"]})
+    print("Requesting human approval...")
+    return {}
