@@ -95,10 +95,30 @@ def route_by_grade(state : AgentState) -> str:
 
 
 # HITL
-def human_appoval(state: AgentState) -> dict:
+def human_approval(state: AgentState) -> dict:
     """
     Human-in-the-loop approval for the lead classification.
     """
     decision = interrupt({"reply_draft": state["reply_draft"]})
-    print("Requesting human approval...")
+    update = {"approval":decision["action"]}
+
+    if decision["action"] == "modify":
+        update["reply_draft"]  = decision["reply_draft"]
+    return update
+
+
+def send(state: AgentState) -> dict:
+    """
+    Send the drafted reply to the lead.
+    """
+    print("Sent!")
     return {}
+
+
+def route_after_approval(state: AgentState) -> str:
+    """
+    Route the lead to the appropriate action after human approval.
+    """
+    if state.get("approval") in ("approved", "modify"):
+        return "send"
+    return "end"
