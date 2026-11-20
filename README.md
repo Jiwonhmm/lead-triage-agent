@@ -88,10 +88,9 @@ cp .env.example .env        # add your OPENAI_API_KEY and Langfuse keys
 # Option 1: Docker
 docker compose up
 
-# Option 2: local
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+# Option 2: local (requires uv)
+uv sync
+uv run uvicorn app.main:app --reload
 ```
 
 ---

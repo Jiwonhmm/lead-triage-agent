@@ -1,0 +1,17 @@
+# Secrets: never copy into the image
+.env
+.env.*
+!.env.example
+
+# Local environments and tooling
+.venv
+.git
+.claude
+node_modules
+__pycache__
+*.pyc
+
+# Not needed at runtime
+tests
+evals
+playground.py
