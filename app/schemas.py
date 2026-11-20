@@ -13,3 +13,11 @@ class ExtractedLead(BaseModel):
 class Classification(BaseModel):
     reason: str = Field(..., description="give the reasons for the classification based on companies standards in 2 sentences")
     grade: Literal["hot","warm","cold"] = Field(..., description="choose one of the three grades based on the company's standards. hot: high potential lead, warm: moderate potential lead, cold: low potential lead")
+
+
+class LeadRequest(BaseModel):
+    raw_text: str = Field(..., description="The raw text of the lead inquiry.")     
+
+class ApproveRequest(BaseModel):
+    action: Literal["approved", "modify", "rejected"] = Field(..., description="The action to take on the lead. 'modify' to modify the reply draft, 'approved' to approve the reply draft.")
+    reply_draft: str | None = None

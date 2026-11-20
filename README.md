@@ -179,8 +179,8 @@ lead-triage-agent/
 ## Roadmap
 
 - [x] LangGraph agent with extract, classify, route, and draft nodes
-- [ ] Human approval with `interrupt` and checkpoints
-- [ ] Async FastAPI endpoints
+- [x] Human approval with `interrupt` and checkpoints
+- [x] Async FastAPI endpoints
 - [ ] pytest unit and integration tests
 - [ ] Labeled eval set and eval runner
 - [ ] Langfuse tracing and eval scores
