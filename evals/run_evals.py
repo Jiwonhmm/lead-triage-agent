@@ -17,6 +17,7 @@ FIELDS = ["name", "contact", "service", "budget_text", "desired_date"]
 
 # ---------- 채점 규칙 (dataset.json의 "rules"와 같은 내용) ----------
 
+
 def match_exact(expected, actual):
     """name, service: 대소문자 무시하고 정확히 같아야 맞음. null이면 비어 있어야 맞음."""
     if expected is None:
@@ -52,6 +53,7 @@ def match_field(field, expected, actual):
 
 # ---------- 실행 ----------
 
+
 def main():
     version = sys.argv[1] if len(sys.argv) > 1 else "unlabeled"
 
@@ -75,7 +77,9 @@ def main():
         if classified["grade"] == item["expected_grade"]:
             grade_correct += 1
         else:
-            failures.append(f"{lead_id} grade: expected {item['expected_grade']}, got {classified['grade']}")
+            failures.append(
+                f"{lead_id} grade: expected {item['expected_grade']}, got {classified['grade']}"
+            )
 
         # 3) 필드 채점
         for field in FIELDS:
