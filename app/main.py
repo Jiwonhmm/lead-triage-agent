@@ -1,10 +1,12 @@
 import uuid
+
 from fastapi import FastAPI, HTTPException
 from langgraph.types import Command
-from app.graph import graph
-from app.schemas import LeadRequest, ApproveRequest   
 
-app = FastAPI(title="Lead Triage Agent") 
+from app.graph import graph
+from app.schemas import ApproveRequest, LeadRequest
+
+app = FastAPI(title="Lead Triage Agent")
 
 
 def make_config(thread_id: str) -> dict:
@@ -13,7 +15,7 @@ def make_config(thread_id: str) -> dict:
 
 @app.post("/leads")
 async def create_lead(body: LeadRequest):
-    thread_id = str(uuid.uuid4())                   # 문의마다 새 사물함 번호
+    thread_id = str(uuid.uuid4())  # 문의마다 새 사물함 번호
     await graph.ainvoke({"raw_text": body.raw_text}, make_config(thread_id))
     return {"thread_id": thread_id}
 
@@ -21,7 +23,7 @@ async def create_lead(body: LeadRequest):
 @app.get("/leads/{thread_id}")
 async def get_lead(thread_id: str):
     snapshot = await graph.aget_state(make_config(thread_id))
-    if not snapshot.values:                         # 저장된 게 없으면
+    if not snapshot.values:  # 저장된 게 없으면
         raise HTTPException(status_code=404, detail="Lead not found")
     return {
         "thread_id": thread_id,

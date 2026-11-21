@@ -5,6 +5,7 @@ from tests.test_graph import use_fake_llms
 
 client = TestClient(app)
 
+
 def test_submit_view_approve_flow(monkeypatch):
     use_fake_llms(monkeypatch, "hot")
 
@@ -25,7 +26,8 @@ def test_submit_view_approve_flow(monkeypatch):
     assert response.status_code == 200
     assert response.json()["approval"] == "approved"
 
+
 # return 404 test
 def test_unknown_thread_returns_404():
-    response = client.get("/leads/does-not-exist")   # 실행: 없는 번호로 조회
-    assert response.status_code == 404                # 확인
+    response = client.get("/leads/does-not-exist")  # 실행: 없는 번호로 조회
+    assert response.status_code == 404  # 확인

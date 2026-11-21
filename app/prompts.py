@@ -4,7 +4,7 @@ from pathlib import Path
 COMPANY_PATH = Path(__file__).parent.parent / "data" / "company.json"
 company_data = json.loads(COMPANY_PATH.read_text(encoding="utf-8"))
 
-#v1
+# v1
 EXTRACT_SYSTEM_PROMPT = """You are a precise data extraction assistant for lead triage.
 Extract lead information strictly from the provided description.
 
@@ -23,7 +23,7 @@ Map the requested service to one of the following categories:
 - `null`: No specific service is mentioned or implied in the description.
 """
 
-#v1
+# v1
 CLASSIFY_SYSTEM_PROMPT = """You are a lead classification assistant for triage.
 ### Lead Grading Rules (`lead_grade`)
 Evaluate the lead against the criteria below in order (`cold` first, then `hot`, then `warm`). While extracted fields forbid guessing, you may use reasonable judgment on scope sizing and timeline intent when assigning `lead_grade`:
@@ -44,19 +44,22 @@ Evaluate the lead against the criteria below in order (`cold` first, then `hot`,
   - Budget is unstated (with unclear scope) or slightly below the service minimum.
   - Timeline is vague, unstated, or 3+ months away.
   - Lead indicates they are still early in researching or comparing options.
-"""     
+"""
 
-#v1
+
+# v1
 def _format_services(services: list[dict]) -> str:
     return "\n".join(
         f"- {s['name']}: {s['description']} Price: {s['price_range']}. Timeline: {s['typical_timeline']}."
         for s in services
     )
 
+
 def _format_list(items: list[str]) -> str:
     return "\n".join(f"- {item}" for item in items)
 
-#v1
+
+# v1
 DRAFT_REPLY_SYSTEM_PROMPT = f"""You are a customer support representative at {company_data["name"]}.
 Write a draft reply to the customer inquiry, based only on the company information and guidelines below.
 

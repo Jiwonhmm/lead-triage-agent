@@ -1,11 +1,11 @@
-#노드 함수 만들기
+# 노드 함수 만들기
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from app.schemas import ExtractedLead, Classification
-from app.state import AgentState
-from app.prompts import EXTRACT_SYSTEM_PROMPT, CLASSIFY_SYSTEM_PROMPT, DRAFT_REPLY_SYSTEM_PROMPT
-from langgraph.types import interrupt 
+from langgraph.types import interrupt
 
+from app.prompts import CLASSIFY_SYSTEM_PROMPT, DRAFT_REPLY_SYSTEM_PROMPT, EXTRACT_SYSTEM_PROMPT
+from app.schemas import Classification, ExtractedLead
+from app.state import AgentState
 
 load_dotenv()
 
@@ -14,38 +14,40 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 extract_llm = llm.with_structured_output(ExtractedLead)
 classify_llm = llm.with_structured_output(Classification)
 
+
 # 노드 함수
 def extract(state: AgentState) -> dict:
     """
     Extract lead information from the raw text in the state.
     """
     raw_text = state["raw_text"]
-    
+
     # LLM 호출
-    result = extract_llm.invoke([
-        ("system", EXTRACT_SYSTEM_PROMPT),
-        ("human", raw_text)
-    ])
-    
+    result = extract_llm.invoke([("system", EXTRACT_SYSTEM_PROMPT), ("human", raw_text)])
+
     return {"extracted": result}
 
 
-#classification 노드 함수
+# classification 노드 함수
 def classify(state: AgentState) -> dict:
     """
     Classify the lead based on the extracted information in the state.
     """
     raw_text = state["raw_text"]
     extracted = state["extracted"]
-    
-    # LLM 호출
-    result = classify_llm.invoke([
-        ("system", CLASSIFY_SYSTEM_PROMPT),
-        ("human", f"Raw text: {raw_text}\nExtracted lead information: {extracted.model_dump_json()}")
-    ])
-    
-    return {"grade": result.grade, "grade_reason": result.reason}
 
+    # LLM 호출
+    result = classify_llm.invoke(
+        [
+            ("system", CLASSIFY_SYSTEM_PROMPT),
+            (
+                "human",
+                f"Raw text: {raw_text}\nExtracted lead information: {extracted.model_dump_json()}",
+            ),
+        ]
+    )
+
+    return {"grade": result.grade, "grade_reason": result.reason}
 
 
 def draft_reply(state: AgentState) -> dict:
@@ -55,14 +57,19 @@ def draft_reply(state: AgentState) -> dict:
     raw_text = state["raw_text"]
     extracted = state["extracted"]
 
-    result  = llm.invoke([
-        ("system", DRAFT_REPLY_SYSTEM_PROMPT),
-        ("human", f"Raw text: {raw_text}\nExtracted lead information: {extracted.model_dump_json()}\nClassification: {state['grade']} - {state['grade_reason']}")
-    ])
+    result = llm.invoke(
+        [
+            ("system", DRAFT_REPLY_SYSTEM_PROMPT),
+            (
+                "human",
+                f"Raw text: {raw_text}\nExtracted lead information: {extracted.model_dump_json()}\nClassification: {state['grade']} - {state['grade_reason']}",
+            ),
+        ]
+    )
 
     return {"reply_draft": result.content}
 
-    
+
 def schedule_followup(state: AgentState) -> dict:
     """
     Schedule a follow-up based on the lead's grade and extracted information.
@@ -79,7 +86,7 @@ def log_only(state: AgentState) -> dict:
     return {}
 
 
-def route_by_grade(state : AgentState) -> str:
+def route_by_grade(state: AgentState) -> str:
     """
     Route the lead to the appropriate action based on its grade.
     """
@@ -100,10 +107,10 @@ def human_approval(state: AgentState) -> dict:
     Human-in-the-loop approval for the lead classification.
     """
     decision = interrupt({"reply_draft": state["reply_draft"]})
-    update = {"approval":decision["action"]}
+    update = {"approval": decision["action"]}
 
     if decision["action"] == "modify":
-        update["reply_draft"]  = decision["reply_draft"]
+        update["reply_draft"] = decision["reply_draft"]
     return update
 
 

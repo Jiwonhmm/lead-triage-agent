@@ -1,10 +1,18 @@
-from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import InMemorySaver
-from app.state import AgentState
+from langgraph.graph import END, START, StateGraph
+
 from app.nodes import (
-    extract, classify, draft_reply, schedule_followup, log_only,
-    human_approval, send, route_by_grade, route_after_approval,
+    classify,
+    draft_reply,
+    extract,
+    human_approval,
+    log_only,
+    route_after_approval,
+    route_by_grade,
+    schedule_followup,
+    send,
 )
+from app.state import AgentState
 
 # ① 빈 그래프 만들기: 이 그래프는 AgentState를 쓴다
 builder = StateGraph(AgentState)
@@ -21,14 +29,14 @@ builder.add_node("send", send)
 # ③ 선 잇기: (출발, 도착)
 builder.add_edge(START, "extract")
 builder.add_edge("extract", "classify")
-builder.add_conditional_edges("classify", route_by_grade) #분기 1: 등급
+builder.add_conditional_edges("classify", route_by_grade)  # 분기 1: 등급
 builder.add_edge("draft_reply", "human_approval")
 
-builder.add_conditional_edges("human_approval", route_after_approval, 
-{"send": "send", "end": END}
-) # 분기 2: 승인 결과
+builder.add_conditional_edges(
+    "human_approval", route_after_approval, {"send": "send", "end": END}
+)  # 분기 2: 승인 결과
 
-builder.add_edge("send",END)
+builder.add_edge("send", END)
 builder.add_edge("schedule_followup", END)
 builder.add_edge("log_only", END)
 
