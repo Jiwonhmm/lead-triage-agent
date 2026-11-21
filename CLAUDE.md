@@ -15,10 +15,10 @@ Lead Triage Agent: a LangGraph agent that reads a customer inquiry, extracts key
 | `app/prompts.py` | System prompts. Each prompt has a `#vN` version comment. Company info is loaded from `data/company.json`. |
 | `app/nodes.py` | Node functions (`extract`, `classify`, `draft_reply`, ...) and router functions (`route_by_grade`). |
 | `app/graph.py` | Builds and compiles the `StateGraph`. |
-| `app/main.py` | FastAPI endpoints (planned). |
+| `app/main.py` | Async FastAPI endpoints: `POST /leads`, `GET /leads/{thread_id}`, `POST /leads/{thread_id}/approve`. |
 | `data/` | `company.json` (fictional company config) and `sample_leads.json` (20 sample inquiries). |
 | `evals/` | `dataset.json` (labeled leads), `run_evals.py`, and `prompt_log.md` (record of every prompt change). |
-| `tests/` | pytest tests. LLM calls are mocked. |
+| `tests/` | pytest tests. LLM calls are mocked with `monkeypatch` (see `use_fake_llms` in `test_graph.py`). |
 
 Import direction: `nodes -> state -> schemas`. `schemas.py` must never import `state.py` or `nodes.py`.
 
@@ -27,8 +27,11 @@ Import direction: `nodes -> state -> schemas`. `schemas.py` must never import `s
 Run everything from the project root.
 
 ```bash
-uv run python playground.py   # run sample leads through the graph (calls the real API, costs money)
-uv run pytest                 # tests (LLM mocked, free)
+uv run python playground.py              # run a sample lead through the graph (real API, costs money)
+uv run pytest                            # tests (LLM mocked, free)
+uv run python -m evals.run_evals v1      # eval set against the real API (costs money; only when asked)
+uv run uvicorn app.main:app --reload     # API at http://localhost:8000/docs
+docker compose up --build                # same API in Docker (reads keys from .env)
 uv run ruff format .          # format
 uv run ruff check .           # lint
 ```

@@ -67,5 +67,7 @@ Filled in after `evals/run_evals.py` runs on all 20 labeled leads.
 
 | Version | Classification accuracy | Extraction accuracy | Notes |
 | --- | --- | --- | --- |
-| v1 | TBD | TBD | Baseline |
+| Version | Classification accuracy | Extraction accuracy | Notes |
+| --- | --- | --- | --- |
+| v1 | 100% | 88% | Baseline |
 | v2 | TBD | TBD | |

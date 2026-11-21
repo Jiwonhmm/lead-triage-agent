@@ -23,26 +23,28 @@ Each inquiry runs through a LangGraph state graph. Every node reads and updates 
 ```mermaid
 flowchart TD
     A[New inquiry] --> B[extract]
-    B -->|valid| C[classify]
-    B -->|validation failed twice| R[needs_review]
-    C --> D{route}
+    B --> C[classify]
+    C --> D{route_by_grade}
     D -->|hot| E[draft_reply]
     D -->|warm| F[schedule_followup]
     D -->|cold| G[log_only]
     E --> H[human_approval]
-    H -->|approved / edited| I[send]
-    H -->|rejected| G
+    H --> J{route_after_approval}
+    J -->|approved / modify| I[send]
+    J -->|rejected| K[end]
 ```
 
 | Node | What it does |
 | --- | --- |
-| `extract` | Uses LLM structured output (Pydantic) to pull name, contact, service, budget, and preferred date. Retries once if validation fails, then sends the lead to human review. |
+| `extract` | Uses LLM structured output (Pydantic) to pull name, contact, service, budget, and preferred date. Missing fields stay `null` instead of being guessed. |
 | `classify` | Labels the lead as hot, warm, or cold, and stores the reason. |
-| `route` | Conditional edge that picks the next step based on the tier. |
+| `route_by_grade` | Conditional edge that picks the next step based on the tier. Pure Python, no LLM call. |
 | `draft_reply` | Writes a reply grounded in the company's service information. |
-| `schedule_followup` | Creates a follow-up task instead of replying right away. |
+| `schedule_followup` | Placeholder for creating a follow-up task (logs only in this demo). |
+| `log_only` | Placeholder for recording a cold lead (logs only in this demo). |
 | `human_approval` | Pauses the graph with `interrupt` until a person approves, edits, or rejects the draft. |
-| `send` | Marks the approved reply as sent. In this demo, it is recorded in the database instead of emailed. |
+| `route_after_approval` | Sends the reply only if it was approved or modified. A rejected draft ends the run. |
+| `send` | Marks the approved reply as sent. In this demo it only logs; no email goes out. |
 
 ---
 
@@ -50,8 +52,8 @@ flowchart TD
 
 - **Agent:** LangGraph, LangChain, OpenAI API
 - **API:** FastAPI (async), Pydantic
-- **Persistence:** LangGraph checkpointer (SQLite)
-- **Observability and evals:** Langfuse
+- **Persistence:** LangGraph checkpointer (`InMemorySaver`)
+- **Evals:** labeled dataset and custom runner (Langfuse tracing planned)
 - **Testing:** pytest, ruff
 - **Delivery:** Docker, Docker Compose, GitHub Actions
 
@@ -67,12 +69,14 @@ flowchart TD
 
 Interactive docs are available at `/docs` once the server is running.
 
+Approve request body: `{"action": "approved"}`, `{"action": "modify", "reply_draft": "..."}`, or `{"action": "rejected"}`.
+
 Example request:
 
 ```bash
 curl -X POST http://localhost:8000/leads \
   -H "Content-Type: application/json" \
-  -d '{"message": "Hi, we need a quote for a kitchen renovation next month. Budget is around $20k."}'
+  -d '{"raw_text": "Hi, we need a new 6-page website for our bakery. Budget is about $5,000 and we want to launch next month. Email: owner@bakery.example"}'
 ```
 
 ---
@@ -98,18 +102,18 @@ uv run uvicorn app.main:app --reload
 ## Testing and evaluation
 
 ```bash
-pytest                      # unit and integration tests (LLM calls are mocked)
-python evals/run_evals.py   # runs the labeled eval set against the real model
+uv run pytest                          # 13 unit and integration tests (LLM calls are mocked)
+uv run python -m evals.run_evals v1    # labeled eval set against the real model (costs a few cents)
 ```
 
 - **Unit and integration tests** mock the LLM so routing and API behavior are deterministic.
-- **Evals** run a labeled set of sample inquiries against the real model and report classification accuracy and field-level extraction accuracy. Results and traces are logged to Langfuse.
+- **Evals** run a labeled set of sample inquiries against the real model and report classification accuracy and field-level extraction accuracy. Scoring rules for each field are defined in [`evals/dataset.json`](evals/dataset.json), and every prompt change is recorded in [`evals/prompt_log.md`](evals/prompt_log.md).
 
 ### Results
 
 | Version | Classification accuracy | Extraction accuracy | Notes |
 | --- | --- | --- | --- |
-| v1 prompt | TBD | TBD | Baseline |
+| v1 prompt | 100% | 88% | Baseline (20 leads, gpt-4o-mini) |
 | v2 prompt | TBD | TBD | After reviewing failures |
 
 ---
@@ -118,7 +122,7 @@ python evals/run_evals.py   # runs the labeled eval set against the real model
 
 - **Human in the loop by default.** An AI should not send a customer-facing message on its own. The graph pauses at `human_approval` and only resumes after a person reviews the draft.
   - In testing, the same inquiry run four times at `temperature=0` produced four different drafts. All followed the reply guidelines, but only two of the four mentioned the booking integration the customer asked for. Wording and coverage vary from run to run, so a person checks each draft before it goes out.
-- **Validate before trusting.** Extracted data is checked against a Pydantic schema. Failed extractions are retried once, then routed to human review instead of guessing.
+- **Validate before trusting.** LLM output is parsed into Pydantic models with `Literal` types, so a grade or service outside the allowed values fails validation instead of silently routing the lead. API request bodies are validated the same way (invalid input returns 422).
 - **Mock for tests, measure with evals.** Unit tests stay fast and deterministic by mocking the model. Model quality is measured separately with a labeled eval set.
 
 ---
@@ -155,13 +159,16 @@ lead-triage-agent/
 │   ├── prompts.py      # Prompts with version notes
 │   └── main.py         # FastAPI endpoints
 ├── data/
-│   └── sample_leads.json
+│   ├── company.json      # fictional company config
+│   └── sample_leads.json # 20 sample inquiries
 ├── evals/
-│   ├── dataset.json
-│   └── run_evals.py
+│   ├── dataset.json      # expected answers + scoring rules
+│   ├── run_evals.py
+│   └── prompt_log.md     # every prompt change and why
 ├── tests/
-│   ├── test_routing.py
-│   └── test_api.py
+│   ├── test_routing.py   # router functions
+│   ├── test_graph.py     # graph flow with mocked LLMs
+│   └── test_api.py       # FastAPI TestClient flow
 ├── .claude/
 │   ├── commands/       # custom slash commands
 │   └── settings.json   # hooks
@@ -181,7 +188,7 @@ lead-triage-agent/
 - [x] Human approval with `interrupt` and checkpoints
 - [x] Async FastAPI endpoints
 - [x] pytest unit and integration tests
-- [ ] Labeled eval set and eval runner
+- [x] Labeled eval set and eval runner
 - [ ] Langfuse tracing and eval scores
 - [x] Docker and GitHub Actions CI
 - [ ] Eval results and before/after comparison in this README
