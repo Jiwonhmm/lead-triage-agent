@@ -183,7 +183,7 @@ lead-triage-agent/
 - [x] pytest unit and integration tests
 - [ ] Labeled eval set and eval runner
 - [ ] Langfuse tracing and eval scores
-- [ ] Docker and GitHub Actions CI
+- [x] Docker and GitHub Actions CI
 - [ ] Eval results and before/after comparison in this README
 
 ---
