@@ -1,0 +1,131 @@
+{
+  "rules": {
+    "join": "Each item's id matches an inquiry in data/sample_leads.json. The raw text lives there, not here.",
+    "expected_grade": "Exact match: hot, warm, or cold.",
+    "name_and_service": "Case-insensitive exact match. null means the field must be null.",
+    "contact": "A list of pieces. Every piece must appear in the extracted contact. An empty list means contact must be null.",
+    "budget_text_and_desired_date": "A string must appear inside the extracted value (case-insensitive). A list means any one item may appear. null means the field must be null. A list that contains null also accepts null."
+  },
+  "items": [
+    {
+      "id": "lead-001",
+      "expected_grade": "hot",
+      "expected": {"name": "Sarah Mitchell", "contact": ["sarah@mitchelldental.example", "905-555-0142"], "service": "website_design", "budget_text": "9,000", "desired_date": "January"},
+      "note": "Redesign with booking. Website design is the main request."
+    },
+    {
+      "id": "lead-002",
+      "expected_grade": "hot",
+      "expected": {"name": "Daniel Okafor", "contact": ["daniel@emberandoak.example"], "service": "ecommerce", "budget_text": "7,500", "desired_date": "December"},
+      "note": "Online store, budget above the CAD 5,000 minimum, live by mid-December."
+    },
+    {
+      "id": "lead-003",
+      "expected_grade": "hot",
+      "expected": {"name": "Priya", "contact": ["priya@riverachen.example", "416-555-0188"], "service": "website_design", "budget_text": "10k", "desired_date": "next week"},
+      "note": "Website build plus maintenance. The build is the main request."
+    },
+    {
+      "id": "lead-004",
+      "expected_grade": "hot",
+      "expected": {"name": "Mina Park", "contact": ["mina@lotusloop.example"], "service": "brand_identity", "budget_text": "8,000", "desired_date": "December"},
+      "note": "Brand first, then website. Ambiguous service: brand_identity is the first step."
+    },
+    {
+      "id": "lead-005",
+      "expected_grade": "hot",
+      "expected": {"name": "Tom", "contact": ["647-555-0110"], "service": "booking_system", "budget_text": "2,500", "desired_date": "3 weeks"},
+      "note": "Booking integration, budget above the CAD 1,500 minimum."
+    },
+    {
+      "id": "lead-006",
+      "expected_grade": "hot",
+      "expected": {"name": "Laura Bennett", "contact": ["laura@bennettroofing.example"], "service": "website_design", "budget_text": "6,000", "desired_date": ["ASAP", "this month"]},
+      "note": "Urgent redesign."
+    },
+    {
+      "id": "lead-007",
+      "expected_grade": "warm",
+      "expected": {"name": "Alex", "contact": ["alex.photo@example.com"], "service": "website_design", "budget_text": null, "desired_date": "next year"},
+      "note": "Exploring. No budget. Vague timeline."
+    },
+    {
+      "id": "lead-008",
+      "expected_grade": "warm",
+      "expected": {"name": "Jordan Lee", "contact": ["jordan@leeaccounting.example"], "service": "website_design", "budget_text": "2,000", "desired_date": "spring"},
+      "note": "Budget a bit below the CAD 3,000 minimum. Comparing agencies. Spring start."
+    },
+    {
+      "id": "lead-009",
+      "expected_grade": "warm",
+      "expected": {"name": null, "contact": ["bakery.sweetrise@example.com"], "service": "ecommerce", "budget_text": null, "desired_date": "3 months"},
+      "note": "No budget, start in about 3 months."
+    },
+    {
+      "id": "lead-010",
+      "expected_grade": "warm",
+      "expected": {"name": "Marcus", "contact": ["289-555-0166"], "service": "seo_maintenance", "budget_text": "300", "desired_date": null},
+      "note": "Mentions a $300/month quote from another vendor, a bit below the CAD 400 minimum. Ambiguous whether this is their budget."
+    },
+    {
+      "id": "lead-011",
+      "expected_grade": "warm",
+      "expected": {"name": "하나", "contact": ["nail.hana@example.com"], "service": "website_design", "budget_text": null, "desired_date": "봄"},
+      "note": "Korean inquiry. Website with booking. No budget. Opening next spring."
+    },
+    {
+      "id": "lead-012",
+      "expected_grade": "warm",
+      "expected": {"name": "Chris Dubois", "contact": ["chris@dubois-consulting.example"], "service": "brand_identity", "budget_text": "800", "desired_date": [null, "no rush", "availability"]},
+      "note": "Borderline. $800 is about 53% of the CAD 1,500 minimum: below range but not far below (the prompt's cutoff is 50%)."
+    },
+    {
+      "id": "lead-013",
+      "expected_grade": "warm",
+      "expected": {"name": "Amara Singh", "contact": ["amara@greenway.example"], "service": "website_design", "budget_text": null, "desired_date": "February"},
+      "note": "Funds need board approval first."
+    },
+    {
+      "id": "lead-014",
+      "expected_grade": "cold",
+      "expected": {"name": null, "contact": [], "service": null, "budget_text": null, "desired_date": null},
+      "note": "Spam. Not a customer request, so no fields should be extracted."
+    },
+    {
+      "id": "lead-015",
+      "expected_grade": "cold",
+      "expected": {"name": "Kevin", "contact": ["kevin@quickbitesapp.example"], "service": "other", "budget_text": "4,000", "desired_date": "2 months"},
+      "note": "Native mobile app is out of scope."
+    },
+    {
+      "id": "lead-016",
+      "expected_grade": "cold",
+      "expected": {"name": "Nina Rossi", "contact": [], "service": null, "budget_text": null, "desired_date": null},
+      "note": "Job seeker. No project and no contact details in the text."
+    },
+    {
+      "id": "lead-017",
+      "expected_grade": "cold",
+      "expected": {"name": null, "contact": [], "service": "website_design", "budget_text": "100", "desired_date": null},
+      "note": "Budget far below minimum and no way to reply."
+    },
+    {
+      "id": "lead-018",
+      "expected_grade": "cold",
+      "expected": {"name": "Michael", "contact": [], "service": null, "budget_text": null, "desired_date": null},
+      "note": "Vendor partnership pitch, not a customer request."
+    },
+    {
+      "id": "lead-019",
+      "expected_grade": "cold",
+      "expected": {"name": null, "contact": ["ads@northfieldmotors.example"], "service": "other", "budget_text": "1,000", "desired_date": null},
+      "note": "Paid ads management is out of scope."
+    },
+    {
+      "id": "lead-020",
+      "expected_grade": "cold",
+      "expected": {"name": null, "contact": [], "service": null, "budget_text": null, "desired_date": null},
+      "note": "No project and no contact. Really a follow-up complaint from an existing customer (see prompt_log.md)."
+    }
+  ]
+}
