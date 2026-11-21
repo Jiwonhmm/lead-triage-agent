@@ -180,7 +180,7 @@ lead-triage-agent/
 - [x] LangGraph agent with extract, classify, route, and draft nodes
 - [x] Human approval with `interrupt` and checkpoints
 - [x] Async FastAPI endpoints
-- [ ] pytest unit and integration tests
+- [x] pytest unit and integration tests
 - [ ] Labeled eval set and eval runner
 - [ ] Langfuse tracing and eval scores
 - [ ] Docker and GitHub Actions CI
