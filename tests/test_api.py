@@ -31,3 +31,24 @@ def test_submit_view_approve_flow(monkeypatch):
 def test_unknown_thread_returns_404():
     response = client.get("/leads/does-not-exist")  # 실행: 없는 번호로 조회
     assert response.status_code == 404  # 확인
+
+
+def test_invalid_action_returns_422():
+    response = client.post("/leads/any-id/approve", json={"action": "yes"})
+    assert response.status_code == 422
+
+
+def test_health_needs_no_api_key(monkeypatch):
+    monkeypatch.setenv("API_ACCESS_KEY", "secret")
+    assert client.get("/health").status_code == 200
+
+
+def test_missing_api_key_returns_401(monkeypatch):
+    monkeypatch.setenv("API_ACCESS_KEY", "secret")
+    assert client.get("/leads/any-id").status_code == 401
+
+
+def test_correct_api_key_is_accepted(monkeypatch):
+    monkeypatch.setenv("API_ACCESS_KEY", "secret")
+    response = client.get("/leads/does-not-exist", headers={"X-API-Key": "secret"})
+    assert response.status_code == 404  # passed the key check, then no such lead

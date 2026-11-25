@@ -111,10 +111,12 @@ uv run python -m evals.run_evals v1    # labeled eval set against the real model
 
 ### Results
 
+Measured on 20 labeled leads with `gpt-4o-mini`. One run per version; results can shift by a few points between runs.
+
 | Version | Classification accuracy | Extraction accuracy | Notes |
 | --- | --- | --- | --- |
 | v1 prompt | 100% | 88% | Baseline (20 leads, gpt-4o-mini) |
-| v2 prompt | TBD | TBD | After reviewing failures |
+| v2 prompt | 100% | 94% | Field definitions and a "not a customer request" rule, based on the v1 failures |
 
 ---
 
@@ -200,9 +202,9 @@ lead-triage-agent/
 - [x] Async FastAPI endpoints
 - [x] pytest unit and integration tests
 - [x] Labeled eval set and eval runner
-- [ ] Langfuse tracing and eval scores
+- [x] Langfuse tracing and eval scores
 - [x] Docker and GitHub Actions CI
-- [ ] Eval results and before/after comparison in this README
+- [x] Eval results and before/after comparison in this README
 
 ---
 

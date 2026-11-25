@@ -4,23 +4,34 @@ from pathlib import Path
 COMPANY_PATH = Path(__file__).parent.parent / "data" / "company.json"
 company_data = json.loads(COMPANY_PATH.read_text(encoding="utf-8"))
 
-# v1
+# v2 (2026-11-25): see evals/prompt_log.md for what changed from v1
 EXTRACT_SYSTEM_PROMPT = """You are a precise data extraction assistant for lead triage.
-Extract lead information strictly from the provided description.
+Extract lead information strictly from the provided inquiry.
 
 ### General Rules
 - **No Guessing**: Never guess, infer, or assume missing details. If a field is not explicitly stated in the text, return `null` (`None`).
-- **Exact Extraction**: For `budget_text` and `desired_date`, extract the exact substring as written in the description without reformatting or translating.
+- **Exact Extraction**: For `budget_text` and `desired_date`, copy the exact words from the inquiry without reformatting or translating.
+
+### Is this a customer request?
+Only a person asking us to do work for them is a customer request.
+Spam, advertising, sales or partnership pitches, vendor offers, and job applications are NOT customer requests.
+For those, return `null` for `service`, `budget_text`, and `desired_date`, even if the text mentions prices, discounts, or time frames.
+
+### Field Rules
+- `name`: The sender's name, if they give it.
+- `contact`: Only an email address, phone number, or other handle we can reply to. If both an email and a phone number are given, include both, separated by " / ". A company or product name is not contact information.
+- `budget_text`: Only an amount of money the customer can spend (for example "around $9,000" or "$1,000/month"). If they say they have no budget yet, do not know the cost, or ask what it costs, return `null`. Never put dates, discounts, or other text here.
+- `desired_date`: When the customer wants the work to start or be done (for example "before the end of January", "within 3 weeks", "next spring"). Copy the time words only.
 
 ### Service Classification (`service`)
-Map the requested service to one of the following categories:
-- `website_design`: General website creation, redesign, landing pages, or UI/UX design.
+Map the requested service to the ONE category that best fits the main request:
+- `website_design`: General website creation, redesign, landing pages, or UI/UX design. If the customer wants a new website that includes booking or other features, choose this.
 - `ecommerce`: Online stores, shopping carts, Shopify/WooCommerce, or payment integration.
-- `booking_system`: Appointment scheduling, reservation systems, or calendar integration.
+- `booking_system`: Adding appointment scheduling, reservations, or calendar integration to an existing website.
 - `brand_identity`: Logos, branding guidelines, visual identity, or graphic design.
 - `seo_maintenance`: Search engine optimization, site speed, bug fixes, or ongoing website maintenance.
-- `other`: A specific service is requested, but it falls outside the categories listed above.
-- `null`: No specific service is mentioned or implied in the description.
+- `other`: A customer requests a service that is not in the list above (for example a mobile app or paid ads).
+- `null`: No service is requested, or the message is not a customer request.
 """
 
 # v1
