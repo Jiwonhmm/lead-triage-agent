@@ -15,6 +15,7 @@ Lead Triage Agent: a LangGraph agent that reads a customer inquiry, extracts key
 | `app/prompts.py` | System prompts. Each prompt has a `#vN` version comment. Company info is loaded from `data/company.json`. |
 | `app/nodes.py` | Node functions (`extract`, `classify`, `draft_reply`, ...) and router functions (`route_by_grade`). |
 | `app/graph.py` | Builds and compiles the `StateGraph`. |
+| `app/tracing.py` | Optional Langfuse tracing. Callbacks go in the run config so one lead = one trace. Off when `LANGFUSE_PUBLIC_KEY` is not set (tests, CI). |
 | `app/main.py` | Async FastAPI endpoints: `POST /leads`, `GET /leads/{thread_id}`, `POST /leads/{thread_id}/approve`. |
 | `data/` | `company.json` (fictional company config) and `sample_leads.json` (20 sample inquiries). |
 | `evals/` | `dataset.json` (labeled leads), `run_evals.py`, and `prompt_log.md` (record of every prompt change). |

@@ -5,12 +5,17 @@ from langgraph.types import Command
 
 from app.graph import graph
 from app.schemas import ApproveRequest, LeadRequest
+from app.tracing import tracing_callbacks
 
 app = FastAPI(title="Lead Triage Agent")
 
 
 def make_config(thread_id: str) -> dict:
-    return {"configurable": {"thread_id": thread_id}}
+    return {
+        "configurable": {"thread_id": thread_id},
+        "callbacks": tracing_callbacks(),  # one Langfuse trace per request (if enabled)
+        "run_name": "lead-triage",
+    }
 
 
 @app.post("/leads")

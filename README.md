@@ -53,7 +53,7 @@ flowchart TD
 - **Agent:** LangGraph, LangChain, OpenAI API
 - **API:** FastAPI (async), Pydantic
 - **Persistence:** LangGraph checkpointer (`InMemorySaver`)
-- **Evals:** labeled dataset and custom runner (Langfuse tracing planned)
+- **Observability and evals:** Langfuse tracing (one trace per lead, with prompts, tokens, cost, latency), labeled dataset and custom runner
 - **Testing:** pytest, ruff
 - **Delivery:** Docker, Docker Compose, GitHub Actions
 
@@ -102,7 +102,7 @@ uv run uvicorn app.main:app --reload
 ## Testing and evaluation
 
 ```bash
-uv run pytest                          # 13 unit and integration tests (LLM calls are mocked)
+uv run pytest                          # unit and integration tests (LLM calls are mocked)
 uv run python -m evals.run_evals v1    # labeled eval set against the real model (costs a few cents)
 ```
 
@@ -124,6 +124,17 @@ uv run python -m evals.run_evals v1    # labeled eval set against the real model
   - In testing, the same inquiry run four times at `temperature=0` produced four different drafts. All followed the reply guidelines, but only two of the four mentioned the booking integration the customer asked for. Wording and coverage vary from run to run, so a person checks each draft before it goes out.
 - **Validate before trusting.** LLM output is parsed into Pydantic models with `Literal` types, so a grade or service outside the allowed values fails validation instead of silently routing the lead. API request bodies are validated the same way (invalid input returns 422).
 - **Mock for tests, measure with evals.** Unit tests stay fast and deterministic by mocking the model. Model quality is measured separately with a labeled eval set.
+
+---
+
+## Limitations and next steps
+
+- **State lives in memory.** The checkpointer is `InMemorySaver`, so drafts waiting for approval are lost when the server or container restarts, and it only works with a single instance. A production setup would use a persistent checkpointer such as SQLite or Postgres.
+- **Approving a finished lead returns 200.** Sending an approval to a thread that is no longer waiting does nothing but still returns success. It should return `409 Conflict`.
+- **Checkpoint serialization warning.** LangGraph warns that `ExtractedLead` (a Pydantic model stored in state) is deserialized from the checkpoint without being registered, and says this will be blocked in a future version. Fix: register the type with the checkpoint serializer, or store the extracted fields as a plain dict.
+- **No grade for existing customers.** A follow-up such as "I sent a request last week and nobody answered" (lead-020) is graded cold, but a real business should not drop it.
+- **Small eval set.** 20 synthetic leads are enough to compare prompt versions, not to claim real-world accuracy.
+- **Demo side effects only.** `schedule_followup`, `log_only`, and `send` log to the console; nothing is emailed or stored.
 
 ---
 

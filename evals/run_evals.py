@@ -9,7 +9,10 @@ import json
 import sys
 from pathlib import Path
 
+from langchain_core.runnables import RunnableLambda
+
 from app.nodes import classify, extract
+from app.tracing import flush_traces, tracing_callbacks
 
 ROOT = Path(__file__).parent.parent
 FIELDS = ["name", "contact", "service", "budget_text", "desired_date"]
@@ -54,6 +57,13 @@ def match_field(field, expected, actual):
 # ---------- 실행 ----------
 
 
+def extract_and_classify(state):
+    """extract와 classify를 차례로 실행한다. 하나로 묶어야 트레이스 1개로 기록된다."""
+    extracted = extract(state)["extracted"]
+    classified = classify({**state, "extracted": extracted})
+    return extracted, classified
+
+
 def main():
     version = sys.argv[1] if len(sys.argv) > 1 else "unlabeled"
 
@@ -69,9 +79,11 @@ def main():
         lead_id = item["id"]
         state = {"raw_text": raw_by_id[lead_id]}
 
-        # 1) 진짜 LLM으로 추출과 분류
-        extracted = extract(state)["extracted"]
-        classified = classify({**state, "extracted": extracted})
+        # 1) 진짜 LLM으로 추출과 분류 (Langfuse에는 문의 1건 = 트레이스 1개로 기록)
+        extracted, classified = RunnableLambda(extract_and_classify).invoke(
+            state,
+            config={"callbacks": tracing_callbacks(), "run_name": f"eval-{version}-{lead_id}"},
+        )
 
         # 2) 등급 채점
         if classified["grade"] == item["expected_grade"]:
@@ -104,6 +116,8 @@ def main():
     print("\nFailures:")
     for line in failures:
         print(" -", line)
+
+    flush_traces()
 
 
 if __name__ == "__main__":

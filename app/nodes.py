@@ -10,7 +10,10 @@ from app.state import AgentState
 load_dotenv()
 
 # 모델은 함수 밖에, 파일 위쪽에 한 번만 필요하다
+# Tracing callbacks are passed in the graph config (see app/tracing.py),
+# so all LLM calls for one lead are grouped under one Langfuse trace.
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
 extract_llm = llm.with_structured_output(ExtractedLead)
 classify_llm = llm.with_structured_output(Classification)
 
