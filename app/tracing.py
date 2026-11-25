@@ -27,3 +27,12 @@ def flush_traces() -> None:
     from langfuse import get_client
 
     get_client().flush()
+
+
+def record_score(trace_id: str | None, name: str, value: float, comment: str | None = None) -> None:
+    """Attach a score to a Langfuse trace. Does nothing if tracing is off."""
+    if not trace_id or not os.getenv("LANGFUSE_PUBLIC_KEY"):
+        return
+    from langfuse import get_client
+
+    get_client().create_score(trace_id=trace_id, name=name, value=value, comment=comment)

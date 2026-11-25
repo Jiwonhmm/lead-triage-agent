@@ -12,7 +12,7 @@ from pathlib import Path
 from langchain_core.runnables import RunnableLambda
 
 from app.nodes import classify, extract
-from app.tracing import flush_traces, tracing_callbacks
+from app.tracing import flush_traces, record_score, tracing_callbacks
 
 ROOT = Path(__file__).parent.parent
 FIELDS = ["name", "contact", "service", "budget_text", "desired_date"]
@@ -80,31 +80,43 @@ def main():
         state = {"raw_text": raw_by_id[lead_id]}
 
         # 1) 진짜 LLM으로 추출과 분류 (Langfuse에는 문의 1건 = 트레이스 1개로 기록)
+        callbacks = tracing_callbacks()
         extracted, classified = RunnableLambda(extract_and_classify).invoke(
             state,
-            config={"callbacks": tracing_callbacks(), "run_name": f"eval-{version}-{lead_id}"},
+            config={"callbacks": callbacks, "run_name": f"eval-{version}-{lead_id}"},
         )
+        trace_id = callbacks[0].last_trace_id if callbacks else None
+        lead_failures = []
 
         # 2) 등급 채점
-        if classified["grade"] == item["expected_grade"]:
+        grade_ok = classified["grade"] == item["expected_grade"]
+        if grade_ok:
             grade_correct += 1
         else:
-            failures.append(
+            lead_failures.append(
                 f"{lead_id} grade: expected {item['expected_grade']}, got {classified['grade']}"
             )
 
         # 3) 필드 채점
+        lead_fields_ok = 0
         for field in FIELDS:
             expected = item["expected"][field]
             actual = getattr(extracted, field)
             if match_field(field, expected, actual):
                 field_correct[field] += 1
+                lead_fields_ok += 1
             else:
-                failures.append(f"{lead_id} {field}: expected {expected!r}, got {actual!r}")
+                lead_failures.append(f"{lead_id} {field}: expected {expected!r}, got {actual!r}")
+
+        # 4) Langfuse에 점수 기록 (트레이싱이 꺼져 있으면 아무 일도 안 함)
+        comment = "\n".join(lead_failures) or "all correct"
+        record_score(trace_id, "grade_correct", 1 if grade_ok else 0, comment)
+        record_score(trace_id, "extraction_accuracy", lead_fields_ok / len(FIELDS), comment)
+        failures.extend(lead_failures)
 
         print(f"done {lead_id}")
 
-    # 4) 결과 출력
+    # 5) 결과 출력
     total = len(dataset["items"])
     print(f"\n=== Eval results ({version}) ===")
     print(f"Classification accuracy: {grade_correct}/{total} = {grade_correct / total:.0%}")
